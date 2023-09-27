@@ -46,51 +46,58 @@ const Page = () => {
       }
 
     // Step 2: Create a video object to get videoId
-    try {
-      const createVideoResponse = await axios.post(
-        'https://ws.api.video/videos',
-        { title: "My First Video" },
-        {
-          auth: {
-            username: "8kn11mC7wSnjZavcpdRtaw7p2Wwj1ZdDQyXyRvdUjHI",
-            password: ''
-          },
-          headers: {
-            'Content-Type': 'application/json',
+      try {
+        const createVideoResponse = await axios.post(
+          'https://ws.api.video/videos',
+          { title: "My First Video" },
+          {
+            auth: {
+              username: "8kn11mC7wSnjZavcpdRtaw7p2Wwj1ZdDQyXyRvdUjHI",
+              password: ''
+            },
+            headers: {
+              'Content-Type': 'application/json',
+            }
           }
-        }
-      );
-      videoId = createVideoResponse.data.videoId;
-    } catch (error) {
-      setIsLoading(false);  // Set loading to false if request fails
-      console.error('Error creating video object:', error);
-      return;
-    }
+        );
+        videoId = createVideoResponse.data.videoId;
+      } catch (error) {
+        setIsLoading(false);  // Set loading to false if request fails
+        console.error('Error creating video object:', error);
+        return;
+      }
 
-    // Step 3: Upload the actual video file
-    const formData = new FormData();
-    formData.append('file', file);
+      // Step 3: Upload the actual video file
+      const formData = new FormData();
+      formData.append('file', file);
 
-    try {
-      const result = await axios.post(
-        `https://ws.api.video/videos/${videoId}/source`,
-        formData,
-        {
-          auth: {
-            username: "8kn11mC7wSnjZavcpdRtaw7p2Wwj1ZdDQyXyRvdUjHI",
-            password: ''
-          },
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      try {
+        const result = await axios.post(
+          `https://ws.api.video/videos/${videoId}/source`,
+          formData,
+          {
+            auth: {
+              username: "8kn11mC7wSnjZavcpdRtaw7p2Wwj1ZdDQyXyRvdUjHI",
+              password: ''
+            },
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
 
+        const api_result = await axios.get(
+          `http://localhost:5000/data/`
+        );
         //here need to update the JSON followin API call to python.
         // // Update your state or perform additional tasks
         // const newData = [{ /* new data based on the uploaded video */ }];
         // setData(newData);
+        const newData = api_result.data //= [{ /* new data based on the uploaded video */ }];
+        setData(newData);
 
+        console.log(`https://ws.api.video/videos/${videoId}/source`)
+        console.log(api_result.data);
         console.log(result);
         setIsVideoUploaded(true);
         setIsLoading(false);
@@ -101,7 +108,7 @@ const Page = () => {
       }
 
 
-  };
+    };
 
   return (
   
