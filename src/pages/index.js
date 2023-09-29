@@ -25,6 +25,8 @@ const Page = () => {
   const [data, setData] = useState([]);
   const [isVideoUploaded, setIsVideoUploaded] = useState(false);
   const [videoUrl, setVideoUrl] = useState(null);
+  const [originalData, setOriginalData] = useState([]);
+
     const handleFileUpload = async (e) => {
 
       setIsLoading(true);
@@ -86,10 +88,17 @@ const Page = () => {
         }
       );
 
-        //here need to update the JSON followin API call to python.
-        // // Update your state or perform additional tasks
-        // const newData = [{ /* new data based on the uploaded video */ }];
-        // setData(newData);
+        const apiResult = await axios.get(
+          "https://0em0g.wiremockapi.cloud/video",
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        console.log("apiResult",apiResult);
+        setData(apiResult.data.result);
+        setOriginalData(apiResult.data.result);
 
         console.log(result);
         setIsVideoUploaded(true);
@@ -135,7 +144,7 @@ const Page = () => {
                 <VideoUploader onUpload={handleFileUpload}/>
               </Container>
               <Container>
-              {isVideoUploaded && <VideoWithEffects data={data} setData={setData} originalData={sampleData} videoUrl={videoUrl}/>}
+              {isVideoUploaded && <VideoWithEffects data={data} setData={setData} originalData={originalData} videoUrl={videoUrl}/>}
               </Container>
               <Container>
               {isVideoUploaded && <SimpleLineChart data={data} />}
